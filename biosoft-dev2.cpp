@@ -2,13 +2,16 @@
 //
 
 #include "stdafx.h"
-#include "BWT.h"
 
+#include "BWT.h"
+#include "Hash_BWT.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {	
-	BWT demo;
-	demo.run();
+	//BWT demo;
+	//demo.run();
+	Hash_BWT demo2;
+	demo2.run();
 	system("pause");
 	return 0;
 }

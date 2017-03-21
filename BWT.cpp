@@ -27,7 +27,7 @@ string BWT::toNext2(string c)
 	return Index2[res];
 }
 
-void BWT::Read_Reference(string filename)
+string BWT::Read_Reference(string filename)
 {
 	ifstream rfp;
 	rfp.open(filename);
@@ -40,7 +40,7 @@ void BWT::Read_Reference(string filename)
 		res += data;
 	}
 	T = res;
-	return;
+	return T;
 }
 
 vector<string> BWT::Read_Subs(string filename)
@@ -68,7 +68,7 @@ void BWT::makebwts2()
 	{
 		BWTS2.push_back(Matrix[i].substr(n - 2, 2));
 		// µ÷ÊÔÊä³ö
-		cout << Matrix[i] << "\t" << SA[i] << "\t" << Matrix[i].substr(n - 2, 2) << endl;;
+		//cout << Matrix[i] << "\t" << SA[i] << "\t" << Matrix[i].substr(n - 2, 2) << endl;;
 
 	}
 	//cout << BWTS << endl;
@@ -151,7 +151,18 @@ int BWT::Occ(int r, char c)
 	}
 	return res;
 }
-
+int BWT::getC(char c)
+{
+	int n = Matrix.size(), res = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (Matrix[i][0] < c)
+		{
+			res++;
+		}
+	}
+	return res;
+}
 int BWT::getC2(string c)
 {
 	if (c == "UU")
@@ -169,6 +180,7 @@ int BWT::getC2(string c)
 int BWT::LFC(int r, char c)
 {
 	return C[c] + Occ(r, c) + 1;
+	//return getC(c) + Occ(r, c);
 }
 int BWT::LFC2(int r, string c)
 {
@@ -216,7 +228,7 @@ void BWT::search2(string sub)
 		cout << endl;
 	}
 }
-void BWT::search(string sub)
+vector<int> BWT::search(string sub)
 {
 	int n = sub.length();
 	char c = sub[n - 1];
@@ -239,49 +251,45 @@ void BWT::search(string sub)
 		i--;
 	}
 	//cout << sp << "\t" << ep << endl;
-
+	vector<int> res(2,-1);
 	if (sp == ep)
 	{
-		cout << sub << "\tNooo...";
+		cout << sub << "\tNooo...\n";
+		return res;
 	}
 	else{
+		
 		cout << sub << "\t";
 		for (int i = sp; i < ep; i++)
 		{
 			cout << SA[i] << "\t";
 		}
 		cout << endl;
+		res[0] = sp;
+		res[1] = ep;
+		return res;
 	}
 }
 
 
 void BWT::run()
 {
-	//T = "GGCTTCCTAC";
-	//C['G'] = 0;
-	//C['A'] = 0;
-	//C['T'] = 0;
-	//C['C'] = 0;
-	//preprocess();
-
-	//cout << C['A'] << "\t" << C['C'] << "\t" << C['G'] << "\t" << C['T'] << "\t" << endl;;
-
-	//search("CTTTT");
-
-	Read_Reference("test.fa");
-	vector<string> res = Read_Subs("sub.fa");
+	Read_Reference("test1.fa");
+	vector<string> res = Read_Subs("sub1.fa");
 	preprocess();
 	makebwts2();
-	//cout << Occ2(8, "GT") << endl;
-	//cout << Occ2(10, "GT") << endl;
-	//cout << Occ2(19, "GG") << endl;
-	//cout << Occ2(20, "GG") << endl;
-	//search2("CTACTTCAGGGTCA");
 	for (auto s : res){
+		clock_t start, mid, finish;
+		start = clock();
 		search(s);
+		mid = clock();
 		search2(s);
+		finish = clock();
+		float d1 = (double)(mid - start) / CLOCKS_PER_SEC;
+		float d2 = (double)(finish - mid) / CLOCKS_PER_SEC;
+		printf("%f\t%f\n", d1, d2);
 	}
-
+	return;
 }
 BWT::~BWT()
 {
