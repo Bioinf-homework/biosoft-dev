@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BWT">
+    <Position X="4" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAhQAgACAAAAAAAQAUAAAQBAAIAgAAAAACAAgAAEBIE=</HashCode>
+      <FileName>BWT.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Hash_BWT">
+    <Position X="6.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAggIBCAAAAAAAAgAAAAAAAAIAAABAQIAABAAEAA=</HashCode>
+      <FileName>Hash_BWT.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BWT2">
+    <Position X="1.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAwEAAAAAAAAIABAAAAAAAgAAAAAIAAUAAAAAAEA=</HashCode>
+      <FileName>BWT2.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

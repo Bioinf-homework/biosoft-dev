@@ -185,14 +185,15 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 			}
 			string or = T.substr(or_index, n);
 
-			int d = Hamming(or, sub);
+			int d2 = Hamming(or, sub);
+			int d = editDis(or, sub);
 
 			if (d < n*e)
 			{
 				Final_res.push_back(or_index);
 			}
 			cout << "Ô­Ê¼´®£º" << T.substr(or_index, n) << endl;
-			cout << "¾àÀë£º" << d << endl;
+			cout << "edit¾àÀë£º" << d <<"\thamming ¾àÀë"<<d2<< endl;
 			//cout << or_index << endl;
 		}
 		cout << endl;

@@ -8,24 +8,13 @@ BWT::BWT()
 	toNext['A'] = 'C';
 	toNext['C'] = 'G';
 	toNext['G'] = 'T';
-	string str[] = { "AA", "AC", "AG", "AT", "CA", "CC", "CG", "CT", "GA", "GC", "GG", "GT", "TA", "TC", "TG", "TT", "UU" };
-	for (int i = 0; i < 17; i++)
-	{
-		Index2.push_back(str[i]);
-	}
+	//string str[] = { "AA", "AC", "AG", "AT", "CA", "CC", "CG", "CT", "GA", "GC", "GG", "GT", "TA", "TC", "TG", "TT", "UU" };
+	//for (int i = 0; i < 17; i++)
+	//{
+	//	Index2.push_back(str[i]);
+	//}
 }
 
-string BWT::toNext2(string c)
-{
-	int res = 0;
-	for (int i = 0; i < 16; i++)
-	{
-		if (Index2[i] <= c)
-			res++;
-	}
-	//cout << Index2[res];
-	return Index2[res];
-}
 
 string BWT::Read_Reference(string filename)
 {
@@ -60,21 +49,7 @@ vector<string> BWT::Read_Subs(string filename)
 	}
 	return res;
 }
-void BWT::makebwts2()
-{
-	int n = T.length();
-	// 构造BWT2(S)
-	for (int i = 0; i < n; i++)
-	{
-		BWTS2.push_back(Matrix[i].substr(n - 2, 2));
-		// 调试输出
-		//cout << Matrix[i] << "\t" << SA[i] << "\t" << Matrix[i].substr(n - 2, 2) << endl;;
 
-	}
-	//cout << BWTS << endl;
-	return;
-
-}
 void BWT::preprocess()
 {
 	const int n = T.length();
@@ -130,17 +105,6 @@ void BWT::preprocess()
 	return;
 }
 
-int BWT::Occ2(int r, string c)
-{
-	int res = 0;
-	for (int i = 0; i < r; i++)
-	{
-		if (BWTS2[i] == c)
-			res += 1;
-	}
-	return res;
-}
-
 int BWT::Occ(int r, char c)
 {
 	int res = 0;
@@ -163,71 +127,18 @@ int BWT::getC(char c)
 	}
 	return res;
 }
-int BWT::getC2(string c)
-{
-	if (c == "UU")
-		return T.length();
-	int n = Matrix.size(), res = 0;
-	for (int i = 0; i < n; i++)
-	{
-		if (Matrix[i].substr(0, 2) < c)
-		{
-			res++;
-		}
-	}
-	return res;
-}
+
 int BWT::LFC(int r, char c)
 {
 	return C[c] + Occ(r, c) + 1;
 	//return getC(c) + Occ(r, c);
 }
-int BWT::LFC2(int r, string c)
-{
-	return getC2(c) + Occ2(r, c);
-}
-void BWT::search2(string sub)
-{
-	int n = sub.length();
-	string c = sub.substr(n - 2, 2);
-	int sp, ep;
-	sp = getC2(c);
-	//cout << toNext2(c) << endl;
-	ep = getC2(toNext2(c));
-	//cout << sp << "\t" << ep << endl;
-	int i = n - 2;
-	//cout << i << endl;
-	while (sp < ep && i>1)
-	{
-		//c = sub[i];
-		c = sub.substr(i - 2, 2);
-		//cout << c
-		sp = LFC2(sp, c);
-		ep = LFC2(ep, c);
-		i -= 2;
-		//cout << i << "\t" << c << "\t" << sp << "\t" << ep << endl;
-	}
-	if (i == 1)
-	{
-		// todo:
-		sp = LFC(sp, sub[0]);
-		ep = LFC(ep, sub[0]);
-		//cout << sp << "\t" << ep << endl;
-	}
 
-	if (sp == ep)
-	{
-		cout << sub << "\tNooo...\n";
-	}
-	else{
-		cout << sub << "\t";
-		for (int i = sp; i < ep; i++)
-		{
-			cout << SA[i] << "\t";
-		}
-		cout << endl;
-	}
+void BWT::unexactsearch(string sub, float e)
+{
+
 }
+
 vector<int> BWT::search(string sub)
 {
 	int n = sub.length();
@@ -291,6 +202,40 @@ void BWT::run()
 	}
 	return;
 }
+int BWT::editDis(string c1, string c2)
+{
+	int n, m;
+	n = c1.length();
+	m = c2.length();
+
+	vector< vector<int> > M(m + 1, vector<int>(n + 1, 0));
+	//边界设置
+	for (int i = 0; i < M.size(); i++)
+	{
+		M[i][0] = i;
+	}
+	for (int j = 0; j < M[0].size(); j++)
+	{
+		M[0][j] = j;
+	}
+	for (int i = 1; i < M.size(); i++)
+	{
+		for (int j = 1; j < M[0].size(); j++)
+		{
+			// 状态转移..
+			if (c1[j - 1] == c2[i - 1])
+			{
+				M[i][j] = M[i - 1][j - 1];
+			}
+			else
+			{
+				M[i][j] = __min(M[i - 1][j - 1], __min(M[i - 1][j], M[i][j - 1])) + 1;
+			}
+		}
+	}
+	return M[m][n];
+}
+
 BWT::~BWT()
 {
 }

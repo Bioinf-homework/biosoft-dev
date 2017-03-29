@@ -8,24 +8,19 @@ public:
 	string Read_Reference(string filename);
 	vector<string> Read_Subs(string filename);
 	void preprocess();
-	void makebwts2();
 	vector<int> search(string sub);
-	void search2(string sub);
+	void unexactsearch(string sub, float e);
 	int Occ(int r, char c);
-	int Occ2(int r, string c);
 	int LFC(int r, char c);
-	int LFC2(int r, string c);
 	int getC(char c);
-	int getC2(string c);
-	string toNext2(string c);
+	int editDis(string c1, string c2);
 	void run();
 	string T;
 	vector<int> SA;
 	unordered_map<char, int> C;
 	unordered_map<char, char> toNext;
+	vector<string> Matrix;
 private:
 	string BWTS;
-	vector<string> BWTS2;
-	vector<string> Matrix;
-	vector<string> Index2;
+	//vector<string> Index2;
 };
