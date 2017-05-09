@@ -17,9 +17,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//BWT2 demo;
 	//demo.run();
-	string x("abasdjkaldkjalsd");
-	cout << x.substr(2);
-
+	//string strA("abasdjkaldkjalsd");
+	//transform(strA.begin(), strA.end(), strA.begin(), ::toupper);
+	//cout << strA << endl;
 
 	Hash_BWT demo2;
 	demo2.run();

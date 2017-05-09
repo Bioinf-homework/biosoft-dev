@@ -22,6 +22,7 @@ void Hash_BWT::makeHash(int k)
 	for (int i = 0; i < pow(4, k); i++)
 	{
 		string s = IntToS(i, k);
+		dic.push_back(s);
 		sep = search(s);
 		HashIndex[s].push_back(sep[0]);
 		HashIndex[s].push_back(sep[1]);
@@ -32,7 +33,17 @@ void Hash_BWT::makeHash(int k)
 	return;
 }
 
-
+bool Hash_BWT::indic(string s)
+{
+	for (int i = 0; i < dic.size(); i++)
+	{
+		if (s == dic[i])
+		{
+			return true;
+		}
+	}
+	return false;
+}
 //Summary:  用二进制数映射到序列
 
 //Parameters:
@@ -77,11 +88,15 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 	float sn = n*e;
 	sn = floor(sn) + 1;
 
-	int each_ln = floor(n / sn)+1;
+	int each_ln = floor(n / sn);
+
+	int yu = n - each_ln*sn;
+
 	//if (each_ln*sn != n)
 	//{
 	//	sn = ceil(n / each_ln);
 	//}
+
 	if (sn == 1) {
 		each_ln--;
 	}
@@ -110,7 +125,7 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 			break;
 		}
 		string s;
-		if (i*each_ln + each_ln>n)
+		if (i*each_ln + each_ln + yu == n)
 		{
 			s = sub.substr(i*each_ln);
 		}
@@ -120,6 +135,8 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 		}
 
 		sub_arr.push_back(s);
+
+		vector<int> res;
 
 		int sp, ep, j;
 		//cout << s << s.length() << endl;
@@ -144,14 +161,26 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 				// length > k
 				string lastK = s.substr(s.length() - k, k);
 
-				sp = HashIndex[lastK][0];
-				ep = HashIndex[lastK][1];
-				if (sp == -1)	{
-					i++;
-					continue;
+
+				if (indic(lastK) == true)
+				{
+					sp = HashIndex[lastK][0];
+					ep = HashIndex[lastK][1];
+					if (sp == -1)	{
+						i++;
+						//res.push_back(-1);
+						continue;
+					}
+					//倒数k+1个字符起继续 BWT搜索
+					j = s.length() - k - 1;
 				}
-				//倒数k+1个字符起继续 BWT搜索
-				j = s.length() - k - 1;
+				else
+				{
+					j = -1;
+					sp = 0;
+					ep = 0;
+				}
+
 			}
 
 			//cout << s << "\t" << s.substr(s.length() - k, k) << endl;
@@ -172,12 +201,18 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 		else{
 			// length == k的情况
 			string lastK = s.substr(s.length() - k, k);
-
-			sp = HashIndex[lastK][0];
-			ep = HashIndex[lastK][1];
+			if (indic(lastK) == true)
+			{
+				sp = HashIndex[lastK][0];
+				ep = HashIndex[lastK][1];
+			}
+			else
+			{
+				j = -1;sp = 0;ep = 0;
+			}
 		}
 
-		vector<int> res;
+		
 		if (sp == ep)
 		{
 			cout << s << "\tNooo...\n";
@@ -235,7 +270,7 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 			{
 				Final_res.push_back(or_index);
 			}
-			cout << "原始串：" << T.substr(or_index, n) << endl;
+			cout << "原始串：" << or_index <<"\t"<< T.substr(or_index, n) << endl;
 			cout << "edit距离：" << d << "\thamming 距离" << d2 << endl;
 			//cout << or_index << endl;
 		}
@@ -346,7 +381,7 @@ void Hash_BWT::run()
 	Read_Reference("test.fa");
 	vector<string> res = Read_Subs("sub.fa");
 	preprocess();
-	int k = 4;
+	int k = 2;
 	start = clock();
 	makeHash(k);
 	finish = clock();
@@ -356,7 +391,7 @@ void Hash_BWT::run()
 	//Hash_search("AACCCCGTCTCTACTGAAAAATACAAAAAAAAATTAGCCG", 3, 0.1);
 	for (auto s : res){
 
-		start = clock();
+ 		start = clock();
 		Hash_search(s, k, 0.1);
 		finish = clock();
 		d2 = (double)(finish - start) / CLOCKS_PER_SEC;

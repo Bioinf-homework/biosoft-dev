@@ -32,6 +32,7 @@ string BWT::Read_Reference(string filename)
 	while (getline(rfp, data, '\n'))
 	{
 		//cout << data;
+		transform(data.begin(), data.end(), data.begin(), ::toupper);
 		res += data;
 	}
 	T = res;
@@ -53,6 +54,14 @@ vector<string> BWT::Read_Subs(string filename)
 	vector<string> res;
 	while (getline(rfp, data, '\n'))
 	{
+		transform(data.begin(), data.end(),data.begin(), ::toupper);
+		for (int i = 0; i < data.length(); i++)
+		{
+			if (data[i] != 'A' && data[i] != 'C' && data[i] != 'T' && data[i] != 'G')
+			{
+				cout << data[i] << endl;
+			}
+		}
 		res.push_back(data);
 	}
 	cout << "read subs" << endl;
@@ -196,8 +205,8 @@ int BWT::getC(char c)
 //Return : 行数
 int BWT::LFC(int r, char c)
 {
-	//return C[c] + Occ(r, c) + 1;
-	return getC(c) + Occ(r, c);
+	return C[c] + Occ(r, c) + 1;
+	//return getC(c) + Occ(r, c);
 }
 
 //Summary:  非精确匹配条件下，在参考串中搜索待查序列所在位置

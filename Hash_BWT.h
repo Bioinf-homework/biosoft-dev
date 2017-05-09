@@ -14,8 +14,10 @@ public:
 	bool HasPre(vector<int> s, int num);
 	int Hamming(string c1, string c2);
 	void run();
+	bool indic(string s);
 private:
 	map <string, vector<int>> HashIndex;
+	vector<string> dic;
 	vector<string> nt;
 };
 
