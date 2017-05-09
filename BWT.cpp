@@ -2,7 +2,7 @@
 #include "BWT.h"
 
 
-
+//初始化
 BWT::BWT()
 {
 	toNext['A'] = 'C';
@@ -15,7 +15,13 @@ BWT::BWT()
 	//}
 }
 
+//Summary:  读取参考基因组
 
+//Parameters:
+
+//       filename: 读取的文件名
+
+//Return : 整体参考基因组串
 string BWT::Read_Reference(string filename)
 {
 	ifstream rfp;
@@ -32,6 +38,13 @@ string BWT::Read_Reference(string filename)
 	return T;
 }
 
+//Summary:  读取待查序列
+
+//Parameters:
+
+//       filename: 读取的文件名
+
+//Return : 待查序列数组
 vector<string> BWT::Read_Subs(string filename)
 {
 	ifstream rfp;
@@ -50,8 +63,13 @@ vector<string> BWT::Read_Subs(string filename)
 	return res;
 }
 
+//Summary: 预处理，轮转矩阵，排序，构造BWT串，建C索引
+
+//Return : 无
 void BWT::preprocess()
 {
+	clock_t start, finish;
+	start = clock();
 	const int n = T.length();
 	T.insert(n, "$");
 
@@ -64,20 +82,37 @@ void BWT::preprocess()
 		tmp = T.substr(i) + T.substr(0, i);
 		//cout << tmp << endl;;
 	}
+
+	finish = clock();
+	float d1 = (double)(finish - start) / CLOCKS_PER_SEC;
+	printf("构造轮转矩阵时间: %f\n", d1);
+	start = clock();
+
+	
+
+
+	//sort(Matrix.begin(), Matrix.end());
+
 	// 排序
-	for (int i = 0; i <= n; i++)
-	{
-		for (int j = i + 1; j <= n; j++)
-		{
-			if (Matrix[i] > Matrix[j])
-			{
-				swap(Matrix[i], Matrix[j]);
-				swap(SA[i], SA[j]);
-			}
-		}
-	}
+	QuickSort(Matrix, 0, Matrix.size() - 1);
+	//for (int i = 0; i <= n; i++)
+	//{
+	//	for (int j = i + 1; j <= n; j++)
+	//	{
+	//		if (Matrix[i] > Matrix[j])
+	//		{
+	//			swap(Matrix[i], Matrix[j]);
+	//			swap(SA[i], SA[j]);
+	//		}
+	//	}
+	//}
+
 	cout << "\n\n\n";
 
+	finish = clock();
+	d1 = (double)(finish - start) / CLOCKS_PER_SEC;
+	printf("排序时间: %f\n", d1);
+	start = clock();
 	// 构造BWT(S)
 	for (int i = 0; i <= n; i++)
 	{
@@ -102,9 +137,22 @@ void BWT::preprocess()
 			C['T'] += 1;
 		}
 	}
+
+	finish = clock();
+	d1 = (double)(finish - start) / CLOCKS_PER_SEC;
+	printf("构建索引时间: %f\n", d1);
+
 	return;
 }
+//Summary:  计算从第1行到第r行，c字符出现的次数
 
+//Parameters:
+
+//       r: 截止行数
+
+//		 c: 计算的字符
+
+//Return : 出现次数
 int BWT::Occ(int r, char c)
 {
 	int res = 0;
@@ -115,6 +163,15 @@ int BWT::Occ(int r, char c)
 	}
 	return res;
 }
+
+
+//Summary:  计算字符c的起始行数
+
+//Parameters:
+
+//		 c: 计算的字符
+
+//Return : 行数
 int BWT::getC(char c)
 {
 	int n = Matrix.size(), res = 0;
@@ -128,17 +185,42 @@ int BWT::getC(char c)
 	return res;
 }
 
+//Summary:  计算要跳转的行数
+
+//Parameters:
+
+//		 r: 当前行数
+
+//		 c: 当前字符
+
+//Return : 行数
 int BWT::LFC(int r, char c)
 {
-	return C[c] + Occ(r, c) + 1;
-	//return getC(c) + Occ(r, c);
+	//return C[c] + Occ(r, c) + 1;
+	return getC(c) + Occ(r, c);
 }
 
+//Summary:  非精确匹配条件下，在参考串中搜索待查序列所在位置
+
+//Parameters:
+
+//		 sub:待查序列
+
+//		 e: 允许的错误率
+
+//Return : 匹配位置数组
 void BWT::unexactsearch(string sub, float e)
 {
 
 }
 
+//Summary:  精切匹配条件下，在参考串中搜索待查序列所在位置
+
+//Parameters:
+
+//		 sub:待查序列
+
+//Return : 匹配位置数组
 vector<int> BWT::search(string sub)
 {
 	int n = sub.length();
@@ -154,12 +236,16 @@ vector<int> BWT::search(string sub)
 	}
 	//cout << sp << "\t" << ep << endl;
 	int i = n - 2;
+	clock_t start, finish;
 	while (sp < ep && i > -1)
 	{
+		start = clock();
 		c = sub[i];
 		sp = LFC(sp, c);
 		ep = LFC(ep, c);
 		i--;
+		finish = clock();
+		//printf("%f\n", (double)(finish - start) / CLOCKS_PER_SEC);
 	}
 	//cout << sp << "\t" << ep << endl;
 	vector<int> res(2,-1);
@@ -182,26 +268,34 @@ vector<int> BWT::search(string sub)
 	}
 }
 
-
+//Summary:  主函数，用于输出结果
 void BWT::run()
 {
-	Read_Reference("test1.fa");
-	vector<string> res = Read_Subs("sub1.fa");
+	Read_Reference("test.fa");
+	vector<string> res = Read_Subs("sub.fa");
+
 	preprocess();
-	makebwts2();
+
 	for (auto s : res){
 		clock_t start, mid, finish;
 		start = clock();
 		search(s);
-		mid = clock();
-		search2(s);
 		finish = clock();
-		float d1 = (double)(mid - start) / CLOCKS_PER_SEC;
-		float d2 = (double)(finish - mid) / CLOCKS_PER_SEC;
-		printf("%f\t%f\n", d1, d2);
+		float d1 = (double)(finish - start) / CLOCKS_PER_SEC;
+		printf("%f\n", d1);
 	}
 	return;
 }
+
+//Summary:  计算两个序列之间的编辑距离
+
+//Parameters:
+
+//		 c1:序列1
+
+//		 c2:序列2
+
+//Return : 编辑距离长度
 int BWT::editDis(string c1, string c2)
 {
 	int n, m;

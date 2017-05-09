@@ -30,6 +30,9 @@
     <ClInclude Include="Hash_BWT.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BWT2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -44,5 +47,11 @@
     <ClCompile Include="Hash_BWT.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BWT2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

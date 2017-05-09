@@ -21,5 +21,6 @@
 #include <map>
 #include <unordered_map>
 #include <time.h>
+#include <algorithm>
 
 using namespace std;
