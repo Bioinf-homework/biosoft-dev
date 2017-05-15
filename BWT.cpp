@@ -148,8 +148,39 @@ void BWT::preprocess()
 	}
 
 	finish = clock();
+
+
+	//构造checkpoint
+	int now = 0;
+	unordered_map<char, int> cp;
+	for (int i = 0; i < BWTS.length(); i++)
+	{
+		if (i / 200 >= 1 && i % 200 == 0)
+		{
+			//cout << cp['A'] << cp['C'] << cp['G'] << cp['T'] << endl;
+			Checkpoint.push_back(cp);
+		}
+		switch (BWTS[i])
+		{
+			case 'A':
+				cp['A'] += 1;
+				break;
+			case 'C':
+				cp['C'] += 1;
+				break;
+			case 'G':
+				cp['G'] += 1;
+				break;
+			case 'T':
+				cp['T'] += 1;
+				break;
+		}
+	}
+
 	d1 = (double)(finish - start) / CLOCKS_PER_SEC;
+
 	printf("构建索引时间: %f\n", d1);
+
 
 	return;
 }
@@ -165,7 +196,12 @@ void BWT::preprocess()
 int BWT::Occ(int r, char c)
 {
 	int res = 0;
-	for (int i = 0; i < r; i++)
+	int k = r / 200, m = r % 200;
+	if (k>=1)
+	{
+		res += Checkpoint[k - 1][c];
+	}
+	for (int i = k*200; i < r; i++)
 	{
 		if (BWTS[i] == c)
 			res += 1;

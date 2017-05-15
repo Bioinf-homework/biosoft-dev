@@ -11,6 +11,18 @@ Hash_BWT::Hash_BWT()
 	}
 }
 
+bool Hash_BWT::indic(string s)
+{
+	for (int i = 0; i < dic.size(); i++)
+	{
+		if (s == dic[i])
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 //Summary:  构建k-mer索引
 
 //Parameters:
@@ -33,17 +45,6 @@ void Hash_BWT::makeHash(int k)
 	return;
 }
 
-bool Hash_BWT::indic(string s)
-{
-	for (int i = 0; i < dic.size(); i++)
-	{
-		if (s == dic[i])
-		{
-			return true;
-		}
-	}
-	return false;
-}
 //Summary:  用二进制数映射到序列
 
 //Parameters:
@@ -238,7 +239,7 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 	//sub_res[0].push_back(55);
 	//去重
 	sub_res = Check(sub_res, each_ln);
-
+	Check2(sub_res, each_ln);
 	// 调试输出
 	cout << "去重后结果" << endl;
 	for (int i = 0; i < sub_res.size(); i++)
@@ -266,7 +267,7 @@ void Hash_BWT::Hash_search(string sub, int k, float e)
 			int d2 = Hamming(or, sub);
 			int d = editDis(or, sub);
 
-			if (d < n*e)
+			if (d <= n*e)
 			{
 				Final_res.push_back(or_index);
 			}
@@ -304,6 +305,27 @@ bool Hash_BWT::HasPre(vector<int> s, int num)
 	}
 	return false;
 }
+vector<vector<int>> Hash_BWT::Check2(vector<vector<int>> &sub_res, int length)
+{
+	for (int i = 0; i < sub_res.size()-1; i++)
+	{
+		for (int ii = 0; ii < sub_res[i].size(); ii++)
+		{
+			for (int j = i + 1; j < sub_res.size(); j++)
+			{
+				for (int k = 0; k < sub_res[j].size(); k++)
+				{
+					if (sub_res[j][k] == sub_res[i][ii] + length*(j - i))
+					{
+						sub_res[j].erase(sub_res[j].begin() + k);
+					}
+				}
+			}
+		}
+	}
+	return sub_res;
+}
+
 
 //Summary:  事先判断分段的待查序列对应的原始序列位置是否有重复，减少计算量。
 
@@ -381,7 +403,7 @@ void Hash_BWT::run()
 	Read_Reference("test.fa");
 	vector<string> res = Read_Subs("sub.fa");
 	preprocess();
-	int k = 2;
+	int k = 3;
 	start = clock();
 	makeHash(k);
 	finish = clock();

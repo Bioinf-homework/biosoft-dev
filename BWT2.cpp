@@ -63,8 +63,11 @@ int BWT2::Occ2(int r, string c)
 	int res = 0;
 	for (int i = 0; i < r; i++)
 	{
-		if (BWTS2[i] == c)
-			res += 1;
+		if (BWTS2[i][0] == c[0])
+		{
+			if (BWTS2[i][1] == c[1])
+				res += 1;
+		}
 	}
 	return res;
 }

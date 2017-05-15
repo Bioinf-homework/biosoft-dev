@@ -15,6 +15,7 @@ public:
 	int Hamming(string c1, string c2);
 	void run();
 	bool indic(string s);
+	vector<vector<int>> Check2(vector<vector<int>> &sub_res, int length);
 private:
 	map <string, vector<int>> HashIndex;
 	vector<string> dic;
