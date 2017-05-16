@@ -31,16 +31,40 @@ bool Hash_BWT::indic(string s)
 void Hash_BWT::makeHash(int k)
 {
 	vector<int> sep;
+
+	int n = 1;
+	HashIndex[IntToS(0, k)].push_back(1);
+	
 	for (int i = 0; i < pow(4, k); i++)
 	{
 		string s = IntToS(i, k);
+		//cout << s;
 		dic.push_back(s);
-		sep = search(s);
-		HashIndex[s].push_back(sep[0]);
-		HashIndex[s].push_back(sep[1]);
+		for (; n < T.length(); n++)
+		{
+			if (Matrix[n].substr(0, k)==s)
+			{
+				continue;
+			}
+			else
+			{
+				if (Matrix[n].substr(0, k).find("$") != -1)
+				{
+					n++;
+				}
+				HashIndex[s].push_back(n);
+				HashIndex[IntToS(i + 1, k)].push_back(n);
+				break;
+			}
+			
+		}
+		
+		//sep = search(s);
+		//HashIndex[s].push_back(sep[0]);
+		//HashIndex[s].push_back(sep[1]);
 		//cout << sep[0] << "\t" << sep[1] << endl;
 	}
-
+	HashIndex[IntToS(pow(4, k)-1, k)].push_back(T.length());
 	//cout << HashIndex["AAA"][0] << "\t" << HashIndex["AAA"][1];
 	return;
 }
@@ -65,7 +89,8 @@ string Hash_BWT::IntToS(int s, int k)
 		s >>= 2;
 	}
 	//cout << res << endl;
-	return res;
+	string r(res.rbegin(), res.rend());
+	return r;
 }
 
 //Summary:  抽屉原理划分待查序列，然后验证所有位置，放回符合的位置
@@ -403,7 +428,7 @@ void Hash_BWT::run()
 	Read_Reference("test.fa");
 	vector<string> res = Read_Subs("sub.fa");
 	preprocess();
-	int k = 3;
+	int k = 6;
 	start = clock();
 	makeHash(k);
 	finish = clock();
