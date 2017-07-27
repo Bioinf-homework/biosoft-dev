@@ -71,50 +71,27 @@ vector<string> BWT::Read_Subs(string filename)
 	}
 	return res;
 }
-
 //Summary: 预处理，轮转矩阵，排序，构造BWT串，建C索引
 
 //Return : 无
-void BWT::preprocess()
+void BWT::preprocess2()
 {
 	clock_t start, finish;
 	start = clock();
 	const int n = T.length();
 	T.insert(n, "$");
-
-	// 轮转矩阵
-	for (int i = 0; i <= n; i++)
+	//vector<int> SA;
+	for (int i = 0; i < T.length(); i++)
 	{
-		Matrix.push_back(T.substr(i) + T.substr(0, i));
 		SA.push_back(i);
-		string tmp;
-		tmp = T.substr(i) + T.substr(0, i);
-		//cout << tmp << endl;;
 	}
-
+	
 	finish = clock();
 	float d1 = (double)(finish - start) / CLOCKS_PER_SEC;
 	printf("构造轮转矩阵时间: %f\n", d1);
 	start = clock();
 
-	
-
-
-	//sort(Matrix.begin(), Matrix.end());
-
-	// 排序
-	QuickSort(Matrix, 0, Matrix.size() - 1);
-	//for (int i = 0; i <= n; i++)
-	//{
-	//	for (int j = i + 1; j <= n; j++)
-	//	{
-	//		if (Matrix[i] > Matrix[j])
-	//		{
-	//			swap(Matrix[i], Matrix[j]);
-	//			swap(SA[i], SA[j]);
-	//		}
-	//	}
-	//}
+	QuickSort(0, T.length()-1);
 
 	cout << "\n\n\n";
 
@@ -123,14 +100,19 @@ void BWT::preprocess()
 	printf("排序时间: %f\n", d1);
 	start = clock();
 	// 构造BWT(S)
-	for (int i = 0; i <= n; i++)
+	string FirstS;
+	for (int i = 0; i < SA.size(); i++)
 	{
-		// 调试输出
-		//cout << Matrix[i] << "\t" << SA[i] << "\t" << Matrix[i][n] << endl;;
-		BWTS += Matrix[i][n];
+		if (SA[i]==0)
+		{
+			BWTS += "$";
+		}
+		else
+		{
+			BWTS += T[SA[i] - 1];
+		}
+		FirstS += T[SA[i]];
 	}
-	//cout << BWTS << endl;
-
 	// 构造C
 	for (auto c : T)
 	{
@@ -147,8 +129,6 @@ void BWT::preprocess()
 		}
 	}
 
-	finish = clock();
-
 
 	//构造checkpoint
 	int now = 0;
@@ -162,28 +142,34 @@ void BWT::preprocess()
 		}
 		switch (BWTS[i])
 		{
-			case 'A':
-				cp['A'] += 1;
-				break;
-			case 'C':
-				cp['C'] += 1;
-				break;
-			case 'G':
-				cp['G'] += 1;
-				break;
-			case 'T':
-				cp['T'] += 1;
-				break;
+		case 'A':
+			cp['A'] += 1;
+			break;
+		case 'C':
+			cp['C'] += 1;
+			break;
+		case 'G':
+			cp['G'] += 1;
+			break;
+		case 'T':
+			cp['T'] += 1;
+			break;
 		}
 	}
-
 	d1 = (double)(finish - start) / CLOCKS_PER_SEC;
+
+	finish = clock();
 
 	printf("构建索引时间: %f\n", d1);
 
-
-	return;
+	cout << "hello" << endl;
 }
+
+//Summary: 预处理，轮转矩阵，排序，构造BWT串，建C索引
+
+//Return : 无
+void BWT::preprocess()
+{}
 //Summary:  计算从第1行到第r行，c字符出现的次数
 
 //Parameters:
@@ -319,7 +305,7 @@ void BWT::run()
 	Read_Reference("test.fa");
 	vector<string> res = Read_Subs("sub.fa");
 
-	preprocess();
+	preprocess2();
 
 	for (auto s : res){
 		clock_t start, mid, finish;
